@@ -16,13 +16,17 @@ int main() {
   auto const y = data.row(1);
   auto const m = y.n_cols;
 
-  plotData(data);
+// plotData(data);
 
   auto const X = join_vert(ones(1, m), x);
   auto theta = zeros(1, 2);
 
   auto const iterations = 1500;
   auto alpha = 0.01;
+
+  auto j = computeCost(X, y, theta);
+
+  cout << j << endl;
 
   return 0;
 }

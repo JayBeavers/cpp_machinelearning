@@ -6,7 +6,7 @@ link_directories (/usr/local/lib /usr/local/opt/libxml2/lib)
 
 add_definitions(-std=c++14)
 
-add_executable (Example1 example1.cpp plotData.cpp)
+add_executable (Example1 example1.cpp plotData.cpp computeCost.cpp)
 
 target_link_libraries (Example1 armadillo mlpack boost_system boost_iostreams boost_filesystem)
 
