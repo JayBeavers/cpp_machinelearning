@@ -9,49 +9,32 @@ using arma::zeros;
 using mlpack::data::Load;
 
 int main() {
-  Gnuplot gp;
-  gp << "set title 'Food Truck Profit'\n";
-  gp << "set xlabel 'Population of City in 10,000s'\n";
-  gp << "set ylabel 'Profit in $10,000s'\n";
-  gp << "unset key\n";
-  gp << "set xrange [3:25]\n";
-  gp << "set yrange [-5:30]\n";
-  gp << "set multiplot\n";
-
-  auto data = mat();
-  Load("ex1data1.txt", data);
-
-  auto const x = data.row(0);
-  auto const y = data.row(1);
-  auto const m = y.n_cols;
-
-  gp << "plot " << gp.binFile1d_colmajor(data, "record");
-  gp << "with points title 'Training Data' pt 2 lc rgb 'red'\n";
-  gp << endl;
-
-  auto const X = join_vert(ones(1, m), x);
-  auto initialTheta = zeros(1, 2);
-
   auto iterations = 1500;
   auto alpha = 0.01;
+  auto initialTheta = zeros(1, 2);
 
+  auto trainingData = mat();
+  Load("ex1data1.txt", trainingData);
+
+  auto const x = trainingData.row(0);
+  auto const y = trainingData.row(1);
+  auto const m = y.n_cols;
+
+  auto const X = join_vert(ones(1, x.n_cols), x);
   auto j = computeCost(X, y, initialTheta);
-
   cout << j << endl;
 
   auto rval = gradientDescent(X, y, initialTheta, alpha, iterations);
   auto theta = std::get<0>(rval);
-
   cout << "Theta determined by gradient descent is " << theta << endl;
 
-  auto predict = theta * X;
+  auto predictions = theta * X;
+  mat predictionData = join_vert(x, predictions);
 
-  mat graphData = join_vert(x, predict);
+  graphGradientDescent(trainingData, predictionData);
 
-  gp << "plot " << gp.binFile1d_colmajor(graphData, "record");
-  gp << "with line title 'Linear Regression'\n";
-  gp << "unset multiplot\n";
-  gp << endl;
+  auto jHistory = std::get<1>(rval);
+  graphCostHistory(jHistory);
 
   mat data1 = { 1, 3.5 };
   int pred1 = accu(data1 * theta.t()) * 10000;
@@ -60,16 +43,6 @@ int main() {
 
   cout << "For population 35k, we predict a profit of " << pred1 << endl;
   cout << "For population 70k, we predict a profit of " << pred2 << endl;
-
-  auto jHistory = std::get<1>(rval);
-  gp << "set term qt 1\n" << endl;
-  gp << "unset xrange\n";
-  gp << "unset yrange\n";
-  gp << "set title 'Cost over iterations'\n";
-  gp << "set xlabel 'Iterations'\n";
-  gp << "set ylabel 'Cost Function'\n";
-  gp << "plot " << gp.binFile1d(jHistory, "record");
-  gp << "with line title 'J History'\n";
 
   return 0;
 }
