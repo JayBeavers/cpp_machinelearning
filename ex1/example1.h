@@ -1,7 +1,7 @@
 #include <mlpack/core.hpp>
 #include <iostream>
 #include <tuple>
-#include "gnuplot-iostream/gnuplot-iostream.h"
+#include "../gnuplot-iostream/gnuplot-iostream.h"
 
 using arma::mat;
 using std::tuple;
