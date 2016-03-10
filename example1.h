@@ -4,5 +4,6 @@
 
 using arma::mat;
 
-void plotData(mat data);
 float computeCost(mat X, mat y, mat theta);
+
+mat gradientDescent(mat X, mat y, mat theta, float alpha, int32_t iterations);
