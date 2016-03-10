@@ -14,7 +14,7 @@ int main() {
   gp << "set xlabel 'Population of City in 10,000s'\n";
   gp << "set ylabel 'Profit in $10,000s'\n";
   gp << "unset key\n";
-  gp << "set xrange [3:25];\n";
+  gp << "set xrange [3:25]\n";
   gp << "set yrange [-5:30]\n";
   gp << "set multiplot\n";
 
@@ -39,7 +39,8 @@ int main() {
 
   cout << j << endl;
 
-  auto theta = gradientDescent(X, y, initialTheta, alpha, iterations);
+  auto rval = gradientDescent(X, y, initialTheta, alpha, iterations);
+  auto theta = std::get<0>(rval);
 
   cout << "Theta determined by gradient descent is " << theta << endl;
 
@@ -49,6 +50,7 @@ int main() {
 
   gp << "plot " << gp.binFile1d_colmajor(graphData, "record");
   gp << "with line title 'Linear Regression'\n";
+  gp << "unset multiplot\n";
   gp << endl;
 
   mat data1 = { 1, 3.5 };
@@ -58,6 +60,16 @@ int main() {
 
   cout << "For population 35k, we predict a profit of " << pred1 << endl;
   cout << "For population 70k, we predict a profit of " << pred2 << endl;
+
+  auto jHistory = std::get<1>(rval);
+  gp << "set term qt 1\n" << endl;
+  gp << "unset xrange\n";
+  gp << "unset yrange\n";
+  gp << "set title 'Cost over iterations'\n";
+  gp << "set xlabel 'Iterations'\n";
+  gp << "set ylabel 'Cost Function'\n";
+  gp << "plot " << gp.binFile1d(jHistory, "record");
+  gp << "with line title 'J History'\n";
 
   return 0;
 }
